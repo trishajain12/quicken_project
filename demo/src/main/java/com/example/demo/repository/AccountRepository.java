@@ -1,13 +1,31 @@
 package com.example.demo.repository;
 
+import com.example.demo.model.Account;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+
 import java.util.List;
 
 @Repository
-// this is what will talk with my database
 public class AccountRepository {
-    public List<String> findAllAccounts(){
-        System.out.println("Repository is working will use a temp list.");
-        return List.of("Account_1","Account_2", "Account_3");
+
+    private final JdbcTemplate jdbcTemplate;
+
+    public AccountRepository(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
+
+    public List<Account> findAllAccounts() {
+        String sql = """
+                SELECT * FROM accounts
+        """;
+
+        return jdbcTemplate.query(sql, (rs, rowNum) ->
+                new Account(
+                        rs.getLong("id"),
+                        rs.getString("name"),
+                        rs.getString("description")
+                )
+        );
     }
 }

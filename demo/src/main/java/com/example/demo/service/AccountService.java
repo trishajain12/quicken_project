@@ -1,10 +1,10 @@
 package com.example.demo.service;
+import com.example.demo.model.Account;
 import org.springframework.stereotype.Service;
 import com.example.demo.repository.AccountRepository;
 import java.util.List;
 
 @Service
-// business logic
 public class AccountService {
     private final AccountRepository accountRepository;
 
@@ -12,12 +12,9 @@ public class AccountService {
         this.accountRepository = accountRepository;
     }
 
-    public List<String> listAccounts(){
-        System.out.println("Service is working calling repo!");
+    public List<Account> listAccounts(){
         return accountRepository.findAllAccounts();
-
     }
-
 }
 
 
