@@ -1,6 +1,7 @@
 package com.example.demo.repository;
 
 import com.example.demo.model.Account;
+import com.example.demo.model.AccountDailySummary;
 import com.example.demo.model.AccountSummaryWithDateRange;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -55,6 +56,34 @@ public class AccountRepository {
                             rs.getBigDecimal("net")
                         ),
                         accountId, fromDate, toDate
+        );
+    }
+
+    // same thing as before just add a group by for the date so we can get all the transactions totals on the day
+    public List<AccountDailySummary> getDailySummary(long accountId, LocalDate from, LocalDate to) {
+        String sql = """
+            SELECT
+                COALESCE(SUM(CASE WHEN amount > 0 THEN amount ELSE 0 END),0.00) AS total_income,
+                COALESCE(SUM(CASE WHEN amount < 0 THEN -amount ELSE 0 END),0.00) AS total_expenses,
+                COALESCE(SUM(amount),0.00) AS net
+            FROM transactions
+            WHERE account_id = ?
+                AND date >= ?
+                AND date <= ?
+            GROUP BY date
+        """;
+
+        Date fromDate = Date.valueOf(from);
+        Date toDate = Date.valueOf(to);
+
+        return jdbcTemplate.queryForObject(sql, (rs,rowNum) ->
+                        new AccountSummaryWithDateRange(
+                                rs.getDate("date").toLocalDate(), // running into this issue figure out what is happening once ur back
+                                rs.getBigDecimal("total_income"),
+                                rs.getBigDecimal("total_expenses"),
+                                rs.getBigDecimal("net")
+                        ),
+                accountId, fromDate, toDate
         );
     }
 }

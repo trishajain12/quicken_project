@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.model.Account;
+import com.example.demo.model.AccountDailySummary;
 import com.example.demo.model.AccountSummaryWithDateRange;
 import com.example.demo.service.AccountService;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -35,5 +36,17 @@ public class AccountController {
         LocalDate toDate = LocalDate.parse(to);
 
         return accountService.getAccountSummary(accountId, fromDate, toDate);
+    }
+
+    @GetMapping("/api/accounts/{accountId}/summary")
+    public List<AccountDailySummary> getDailySummary (
+            @PathVariable long accountId,
+            @RequestParam String from,
+            @RequestParam String to) {
+
+        LocalDate fromDate = LocalDate.parse(from);
+        LocalDate toDate = LocalDate.parse(to);
+
+        return accountService.getDailySummary(accountId, fromDate, toDate);
     }
 }

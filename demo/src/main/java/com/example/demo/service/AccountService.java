@@ -1,6 +1,7 @@
 package com.example.demo.service;
 
 import com.example.demo.model.Account;
+import com.example.demo.model.AccountDailySummary;
 import com.example.demo.model.AccountSummaryWithDateRange;
 import org.springframework.stereotype.Service;
 import com.example.demo.repository.AccountRepository;
@@ -22,6 +23,10 @@ public class AccountService {
 
     public AccountSummaryWithDateRange getAccountSummary(long accountId, LocalDate from, LocalDate to) {
         return accountRepository.getAccountSummary(accountId, from, to);
+    }
+
+    public List<AccountDailySummary> getDailySummary(long accountId, LocalDate from, LocalDate to) {
+        return accountRepository.getDailySummary(accountId, from, to);
     }
 }
 
