@@ -59,10 +59,10 @@ public class AccountRepository {
         );
     }
 
-    // same thing as before just add a group by for the date so we can get all the transactions totals on the day
     public List<AccountDailySummary> getDailySummary(long accountId, LocalDate from, LocalDate to) {
         String sql = """
             SELECT
+                date AS day_total
                 COALESCE(SUM(CASE WHEN amount > 0 THEN amount ELSE 0 END),0.00) AS total_income,
                 COALESCE(SUM(CASE WHEN amount < 0 THEN -amount ELSE 0 END),0.00) AS total_expenses,
                 COALESCE(SUM(amount),0.00) AS net
@@ -76,9 +76,10 @@ public class AccountRepository {
         Date fromDate = Date.valueOf(from);
         Date toDate = Date.valueOf(to);
 
-        return jdbcTemplate.queryForObject(sql, (rs,rowNum) ->
-                        new AccountSummaryWithDateRange(
-                                rs.getDate("date").toLocalDate(), // running into this issue figure out what is happening once ur back
+        // use query not query object we are returning multiple rows not just one per date range
+        return jdbcTemplate.query(sql, (rs,rowNum) ->
+                        new AccountDailySummary(
+                                rs.getDate("day_total").toLocalDate(), // need LocalDate
                                 rs.getBigDecimal("total_income"),
                                 rs.getBigDecimal("total_expenses"),
                                 rs.getBigDecimal("net")

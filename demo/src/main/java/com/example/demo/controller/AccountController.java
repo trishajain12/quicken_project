@@ -38,7 +38,7 @@ public class AccountController {
         return accountService.getAccountSummary(accountId, fromDate, toDate);
     }
 
-    @GetMapping("/api/accounts/{accountId}/summary")
+    @GetMapping("/api/accounts/{accountId}/daily-summary")
     public List<AccountDailySummary> getDailySummary (
             @PathVariable long accountId,
             @RequestParam String from,
