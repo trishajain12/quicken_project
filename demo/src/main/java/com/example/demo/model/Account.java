@@ -1,24 +1,15 @@
 package com.example.demo.model;
 
-public class Account {
-    private long id;
-    private String name;
-    private String description;
-
+public record Account(long id, String name, String description) {
     public Account(long id, String name, String description) {
-        this.id = id;
-        this.name = name;
+        if (id <= 0) {
+            throw new IllegalArgumentException("id must be positive");
+        } else this.id = id;
+
+        if (name == null || name.isEmpty()) {
+            throw new IllegalArgumentException("name cannot be blank");
+        } else this.name = name;
+
         this.description = description;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-    public String getDescription() {
-        return description;
     }
 }
