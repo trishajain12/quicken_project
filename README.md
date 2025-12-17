@@ -219,6 +219,9 @@ Tested using both the browser and terminal as well.
 - Ran collections from terminal using Newman and confirmed 200OK responses for all endpoints
 - Added explicit validation at the controller layer to give bad request error so it doesn't reach the buisness logic
 
+## Architecture Diagram
+![Architecture Diagram](QuickenCloudDiagram.svg)
+
 ### Testing Strategy
 
 - **Unit tests (JUnit)** focus on service-layer aggregation logic:
