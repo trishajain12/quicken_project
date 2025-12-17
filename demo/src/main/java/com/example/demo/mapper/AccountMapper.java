@@ -8,5 +8,5 @@ import org.mapstruct.Mapper;
 public interface AccountMapper {
 
     AccountResource toDto(Account entity);
-    Account toEntity(AccountResource dto);
+    // Account toEntity(AccountResource dto);
 }

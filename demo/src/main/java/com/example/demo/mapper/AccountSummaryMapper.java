@@ -9,5 +9,5 @@ import org.mapstruct.Mapper;
 public interface AccountSummaryMapper {
 
     AccountSummaryResource toDto(AccountSummaryWithDateRange entity);
-    AccountSummaryWithDateRange toEntity(AccountSummaryResource dto);
+    // AccountSummaryWithDateRange toEntity(AccountSummaryResource dto);
 }

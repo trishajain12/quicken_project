@@ -1,12 +1,10 @@
 package com.example.demo.controller;
 
-import com.example.demo.model.Account;
-import com.example.demo.model.AccountDailySummary;
-import com.example.demo.model.AccountSummaryWithDateRange;
 import com.example.demo.resources.AccountDailySummaryResource;
 import com.example.demo.resources.AccountResource;
 import com.example.demo.resources.AccountSummaryResource;
 import com.example.demo.service.AccountService;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -15,6 +13,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @RestController
+@RequestMapping("/api/accounts")
 public class AccountController {
 
     private final AccountService accountService;
@@ -23,63 +22,41 @@ public class AccountController {
         this.accountService = accountService;
     }
 
-    @GetMapping("/api/accounts")
+    @GetMapping
         public List<AccountResource> getAllAccounts(){
             return accountService.listAccounts();
         }
 
-    @GetMapping("/api/accounts/{accountId}/summary")
+    @GetMapping("/{accountId}/summary")
     public AccountSummaryResource getAccountSummary(
             @PathVariable long accountId,
-            @RequestParam String from,
-            @RequestParam String to)
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to)
     {
         checkAccountValue(accountId);
-        if (from == null || to == null) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "We a value for both to and from.");
+        checkDateValues(from,to);
 
-        LocalDate fromDate;
-        LocalDate toDate;
-        try {
-            fromDate = LocalDate.parse(from);
-            toDate = LocalDate.parse(to);
-        } catch (Exception e)  {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid date format - use YYYY-MM-DD.");
-        }
-
-        checkDateValues(fromDate,toDate);
-
-        return accountService.getAccountSummary(accountId, fromDate, toDate);
+        return accountService.getAccountSummary(accountId, from, to);
     }
 
-
-    @GetMapping("/api/accounts/{accountId}/daily-summary")
+    @GetMapping("/{accountId}/daily-summary")
     public List<AccountDailySummaryResource> getDailySummary (
             @PathVariable long accountId,
-            @RequestParam String from,
-            @RequestParam String to)
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to)
     {
         checkAccountValue(accountId);
+        checkDateValues(from,to);
 
-        LocalDate fromDate;
-        LocalDate toDate;
-        try {
-            fromDate = LocalDate.parse(from);
-            toDate = LocalDate.parse(to);
-        } catch (Exception e)  {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid date format - use YYYY-MM-DD.");
-        }
-
-        checkDateValues(fromDate,toDate);
-
-        return accountService.getDailySummary(accountId, fromDate, toDate);
+        return accountService.getDailySummary(accountId, from, to);
     }
 
     private void checkAccountValue(long accountId) {
-        if (accountId <= 0) throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"We need a proper account natural number 0 and onwards.");
+        if (accountId <= 0) throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"accountId must be a positive integer 1 and above");
     }
     private void checkDateValues(LocalDate fromDate, LocalDate toDate) {
         if (fromDate.isAfter(toDate)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "From is after to - recheck the date values");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "from must be on or before to");
         }
     }
 }

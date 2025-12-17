@@ -1,0 +1,31 @@
+{
+	"info": {
+		"_postman_id": "a9178f11-68c9-4134-a581-d0e943c9b92a",
+		"name": "Account List Summary Calls",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "50844068",
+		"_collection_link": "https://tjain010-2901120.postman.co/workspace/Quicken-Cloud-Service-Project~0786913a-f8e5-4a84-b40d-1aa3f7ae9185/collection/50844068-a9178f11-68c9-4134-a581-d0e943c9b92a?action=share&source=collection_link&creator=50844068"
+	},
+	"item": [
+		{
+			"name": "New Request",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/accounts",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"accounts"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

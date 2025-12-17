@@ -1,4 +1,42 @@
-*.iml
-*.zip
+# Build output (any level)
+**/.gradle/
+**/build/
+**/out/
+**/bin/
+
+
+# Node
+node_modules/
+
+# --- OS ---
 .DS_Store
+
+# --- IntelliJ / JetBrains ---
 .idea/
+*.iml
+out/
+
+# --- VS Code ---
+.vscode/
+
+# --- Postman local app folder (keep your /postman collections folder committed) ---
+.postman/
+
+# --- Gradle / Java build output ---
+.gradle/
+**/build/
+bin/
+
+# --- Eclipse / STS ---
+.classpath
+.project
+.settings/
+.factorypath
+.springBeans
+.sts4-cache/
+
+# --- Node ---
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

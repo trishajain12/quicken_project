@@ -1,0 +1,43 @@
+{
+	"info": {
+		"_postman_id": "66662b77-f6b7-4011-b4bc-58dd9e9c03b7",
+		"name": "Account Daily Summary Calls",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "50844068",
+		"_collection_link": "https://tjain010-2901120.postman.co/workspace/Quicken-Cloud-Service-Project~0786913a-f8e5-4a84-b40d-1aa3f7ae9185/collection/50844068-66662b77-f6b7-4011-b4bc-58dd9e9c03b7?action=share&source=collection_link&creator=50844068"
+	},
+	"item": [
+		{
+			"name": "Account Calls",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/accounts/1/daily-summary?from=2024-01-01&to=2024-01-31",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"accounts",
+						"1",
+						"daily-summary"
+					],
+					"query": [
+						{
+							"key": "from",
+							"value": "2024-01-01"
+						},
+						{
+							"key": "to",
+							"value": "2024-01-31"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

@@ -3,12 +3,11 @@ package com.example.demo.repository;
 import com.example.demo.model.Account;
 import com.example.demo.model.AccountDailySummary;
 import com.example.demo.model.AccountSummaryWithDateRange;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDate;
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 @Repository
@@ -21,10 +20,7 @@ public class AccountRepository {
     }
 
     public List<Account> findAllAccounts() {
-        String sql = """
-                SELECT *
-                FROM accounts
-        """;
+        String sql = "SELECT * FROM accounts";
 
         return jdbcTemplate.query(sql, (rs, rowNum) ->
                 new Account(
@@ -49,16 +45,13 @@ public class AccountRepository {
 
         Date fromDate = Date.valueOf(from);
         Date toDate = Date.valueOf(to);
-        try {
-            return jdbcTemplate.queryForObject(sql, (rs,rowNum) ->
-                            new AccountSummaryWithDateRange(
-                                rs.getBigDecimal("total_income"),
-                                rs.getBigDecimal("total_expenses"),
-                                rs.getBigDecimal("net")),
-                            accountId, fromDate, toDate );
-        } catch (EmptyResultDataAccessException e) {
-            return new AccountSummaryWithDateRange (null,null,null);
-        }
+
+        return jdbcTemplate.queryForObject(sql, (rs,rowNum) ->
+                    new AccountSummaryWithDateRange(
+                        rs.getBigDecimal("total_income"),
+                        rs.getBigDecimal("total_expenses"),
+                        rs.getBigDecimal("net")),
+                accountId, fromDate, toDate );
     }
 
     public List<AccountDailySummary> getDailySummary(long accountId, LocalDate from, LocalDate to) {
@@ -79,12 +72,11 @@ public class AccountRepository {
         Date fromDate = Date.valueOf(from);
         Date toDate = Date.valueOf(to);
 
-        return jdbcTemplate.query(sql, (rs,rowNum) ->
-                        new AccountDailySummary(
-                                rs.getObject("day_total", LocalDate.class),
-                                rs.getBigDecimal("total_income"),
-                                rs.getBigDecimal("total_expenses"),
-                                rs.getBigDecimal("net")
-                        ), accountId, fromDate, toDate);
+        return jdbcTemplate.query(sql, (rs,rowNum) -> new AccountDailySummary(
+                        rs.getDate("day_total").toLocalDate(),
+                        rs.getBigDecimal("total_income"),
+                        rs.getBigDecimal("total_expenses"),
+                        rs.getBigDecimal("net")
+                ), accountId, fromDate, toDate);
     }
 }

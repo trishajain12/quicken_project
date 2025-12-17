@@ -7,7 +7,7 @@ import org.mapstruct.Mapper;
 @Mapper(componentModel = "spring")
 public interface AccountDailySummaryMapper {
     AccountDailySummaryResource toDto(AccountDailySummary entity);
-    AccountDailySummary toEntity(AccountDailySummaryResource dto);
+    // AccountDailySummary toEntity(AccountDailySummaryResource dto);
 }
 
 

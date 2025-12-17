@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -69,7 +68,7 @@ class AccountServiceTest {
         LocalDate from = LocalDate.parse("2024-01-01");
         LocalDate to = LocalDate.parse("2024-01-02");
 
-        List<AccountDailySummaryResource> daily = accountService.getDailySummary(1,from,to);
+        List<AccountDailySummaryResource> daily = accountService.getDailySummary(accountId, from, to);
 
         Assertions.assertEquals(2,daily.size());
 
@@ -93,6 +92,24 @@ class AccountServiceTest {
         List<AccountDailySummaryResource> daily = accountService.getDailySummary(accountId, from, to);
 
         Assertions.assertTrue(daily.isEmpty());
+    }
+
+    @Test
+    void getAccountSummary_noLeakAccounts() {
+        LocalDate from = LocalDate.parse("2024-01-01");
+        LocalDate to = LocalDate.parse("2024-01-31");
+
+        AccountSummaryResource account_1 = accountService.getAccountSummary(1, from, to);
+        assertMoneyEquals("3900.00", account_1.totalIncome());
+        assertMoneyEquals("2101.75", account_1.totalExpenses());
+        assertMoneyEquals("1798.25", account_1.net());
+
+        AccountSummaryResource account_2 = accountService.getAccountSummary(2, from, to);
+        assertMoneyEquals("6800.00", account_2.totalIncome());
+        assertMoneyEquals("1976.25", account_2.totalExpenses());
+        assertMoneyEquals("4823.75", account_2.net());
+
+        Assertions.assertEquals(0, account_1.totalIncome().compareTo(new BigDecimal("3900.00")));
     }
 
     private void assertMoneyEquals(String expected, BigDecimal actual) {
