@@ -14,7 +14,6 @@ import org.springframework.web.server.ResponseStatusException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
-
 @Service
 public class AccountService {
     private final AccountRepository accountRepository;
@@ -22,7 +21,12 @@ public class AccountService {
     private final AccountSummaryMapper accountSummaryMapper;
     private final AccountDailySummaryMapper accountDailySummaryMapper;
 
-    public AccountService(AccountRepository accountRepository, AccountMapper accountMapper, AccountSummaryMapper accountSummaryMapper, AccountDailySummaryMapper accountDailySummaryMapper){
+    public AccountService(
+            AccountRepository accountRepository,
+            AccountMapper accountMapper,
+            AccountSummaryMapper accountSummaryMapper,
+            AccountDailySummaryMapper accountDailySummaryMapper
+    ) {
         this.accountRepository = accountRepository;
         this.accountMapper = accountMapper;
         this.accountSummaryMapper = accountSummaryMapper;
@@ -30,7 +34,7 @@ public class AccountService {
     }
 
     public List<AccountResource> listAccounts(){
-        return accountRepository.findAllAccounts().stream().map(accountMapper::toDto).collect(Collectors.toList());
+        return accountMapper.toDtoList(accountRepository.findAllAccounts());
     }
 
     public AccountSummaryResource getAccountSummary(long accountId, LocalDate from, LocalDate to) {
@@ -40,11 +44,7 @@ public class AccountService {
 
     public List<AccountDailySummaryResource> getDailySummary(long accountId, LocalDate from, LocalDate to) {
         requireAccountExists(accountId);
-        return accountRepository.getDailySummary(accountId, from, to).stream().map(accountDailySummaryMapper::toDto).collect(Collectors.toList());
-    }
-
-    public boolean accountExists(long accountId) {
-        return accountRepository.accountExists(accountId);
+        return accountDailySummaryMapper.toDtoList(accountRepository.getDailySummary(accountId, from, to));
     }
 
     private void requireAccountExists(long accountId) {
@@ -52,7 +52,4 @@ public class AccountService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found");
         }
     }
-
 }
-
-
