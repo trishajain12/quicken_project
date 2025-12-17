@@ -52,4 +52,8 @@ public class AccountService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found");
         }
     }
+
+    public boolean accountExists(long accountId) {
+        return accountRepository.accountExists(accountId);
+    }
 }
