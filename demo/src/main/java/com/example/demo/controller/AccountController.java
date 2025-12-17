@@ -23,9 +23,9 @@ public class AccountController {
     }
 
     @GetMapping
-        public List<AccountResource> getAllAccounts(){
-            return accountService.listAccounts();
-        }
+    public List<AccountResource> getAllAccounts(){
+        return accountService.listAccounts();
+    }
 
     @GetMapping("/{accountId}/summary")
     public AccountSummaryResource getAccountSummary(
@@ -35,6 +35,7 @@ public class AccountController {
     {
         checkAccountValue(accountId);
         checkDateValues(from,to);
+        checkAccountExists(accountId);
 
         return accountService.getAccountSummary(accountId, from, to);
     }
@@ -47,6 +48,7 @@ public class AccountController {
     {
         checkAccountValue(accountId);
         checkDateValues(from,to);
+        checkAccountExists(accountId);
 
         return accountService.getDailySummary(accountId, from, to);
     }
@@ -59,4 +61,11 @@ public class AccountController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "from must be on or before to");
         }
     }
+
+    private void checkAccountExists(long accountId) {
+        if (!accountService.accountExists(accountId)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found");
+        }
+    }
+
 }

@@ -112,6 +112,20 @@ class AccountServiceTest {
         Assertions.assertEquals(0, account_1.totalIncome().compareTo(new BigDecimal("3900.00")));
     }
 
+    @Test
+    void getAccountSummary_accountDoesNotExist_returns404() {
+        long accountId = 999;
+        LocalDate from = LocalDate.parse("2024-01-01");
+        LocalDate to = LocalDate.parse("2024-01-31");
+
+        org.springframework.web.server.ResponseStatusException ex = Assertions.assertThrows(
+                org.springframework.web.server.ResponseStatusException.class,
+                () -> accountService.getAccountSummary(accountId, from, to));
+
+        Assertions.assertEquals(org.springframework.http.HttpStatus.NOT_FOUND, ex.getStatusCode());
+    }
+
+
     private void assertMoneyEquals(String expected, BigDecimal actual) {
         Assertions.assertNotNull(actual, "Money value was null");
         Assertions.assertEquals(0, actual.compareTo(new BigDecimal(expected)),

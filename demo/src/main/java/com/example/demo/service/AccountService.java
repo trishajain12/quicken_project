@@ -6,8 +6,10 @@ import com.example.demo.mapper.AccountSummaryMapper;
 import com.example.demo.resources.AccountDailySummaryResource;
 import com.example.demo.resources.AccountResource;
 import com.example.demo.resources.AccountSummaryResource;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import com.example.demo.repository.AccountRepository;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -32,12 +34,25 @@ public class AccountService {
     }
 
     public AccountSummaryResource getAccountSummary(long accountId, LocalDate from, LocalDate to) {
+        requireAccountExists(accountId);
         return accountSummaryMapper.toDto(accountRepository.getAccountSummary(accountId, from, to));
     }
 
     public List<AccountDailySummaryResource> getDailySummary(long accountId, LocalDate from, LocalDate to) {
+        requireAccountExists(accountId);
         return accountRepository.getDailySummary(accountId, from, to).stream().map(accountDailySummaryMapper::toDto).collect(Collectors.toList());
     }
+
+    public boolean accountExists(long accountId) {
+        return accountRepository.accountExists(accountId);
+    }
+
+    private void requireAccountExists(long accountId) {
+        if (!accountRepository.accountExists(accountId)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found");
+        }
+    }
+
 }
 
 

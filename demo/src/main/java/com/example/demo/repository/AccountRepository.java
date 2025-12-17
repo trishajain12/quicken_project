@@ -79,4 +79,10 @@ public class AccountRepository {
                         rs.getBigDecimal("net")
                 ), accountId, fromDate, toDate);
     }
+
+    public boolean accountExists(long accountId) {
+        String sql = "SELECT COUNT(*) FROM accounts WHERE id = ?";
+        Integer count = jdbcTemplate.queryForObject(sql, Integer.class, accountId);
+        return count != null && count > 0;
+    }
 }
