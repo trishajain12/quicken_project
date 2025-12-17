@@ -12,14 +12,68 @@ On startup, Spring executes quicken_project.sql to:
 Base URL: http://localhost:8080
 
 ## 1) List Accounts
-### GET /api/accounts → Returns all accounts
+### GET /api/accounts -> Returns all accounts
 
 **Browser**
 - http://localhost:8080/api/accounts
 
 **Terminal**
 - Basic Run Command: curl http://localhost:8080/api/accounts
-- Nice Fomat Command: curl http://localhost:8080/api/accounts | python3 -m json.tool
+- Nice Format Command: curl http://localhost:8080/api/accounts | python3 -m json.tool
+
+**Postman** 
+
+```
+npx newman run postman/collections/"Account List Summary Calls.postman_collection.json" \
+  -e postman/environments/local.postman_environment.json
+```
+
+## 2) Account Summary
+### GET /api/accounts/{accountId}/summary?from=YYYY-MM-DD&to=YYYY-MM-DD -> Returns account summary
+
+**Browser**
+- http://localhost:8080/api/accounts/1/summary?from=2024-01-01&to=2024-01-31
+
+**Terminal**
+- Basic Run Command: curl http://localhost:8080/api/accounts/1/summary?from=2024-01-01&to=2024-01-31
+- Nice Format Command: curl -s "http://localhost:8080/api/accounts/1/summary?from=2024-01-01&to=2024-01-31" | python3 -m json.tool
+
+**Postman** 
+```
+npx newman run postman/collections/"Account Summary Calls.postman_collection.json" \
+  -e postman/environments/local.postman_environment.json
+```
+
+## 2) Account Summary Daily
+### GET /api/accounts/{accountId}/daily-summary?from=YYYY-MM-DD&to=YYYY-MM-DD -> Returns daily account summary
+
+**Browser**
+- http://localhost:8080/api/accounts/1/daily-summary?from=2024-01-01&to=2024-01-31
+
+**Terminal**
+- Basic Run Command: curl http://localhost:8080/api/accounts/1/daily-summary?from=2024-01-01&to=2024-01-31
+- Nice Format Command: curl -s "http://localhost:8080/api/accounts/1/daily-summary?from=2024-01-01&to=2024-01-31" | python3 -m json.tool
+
+**Postman** 
+```
+npx newman run postman/collections/"Account Daily Summary Calls.postman_collection.json" \
+  -e postman/environments/local.postman_environment.json
+```
+
+## Run All APIs with Postman Collections
+- Test endpoints end to end
+- Useful for Continuous Integration
+```
+for f in postman/collections/*.postman_collection.json; do
+  npx newman run "$f" \
+    -e postman/environments/local.postman_environment.json || exit 1
+done
+```
+
+## Run the Unit Tests
+Commands:
+- cd demo
+- ./gradlew test
 
 ## Work Log
 
@@ -140,4 +194,39 @@ public AccountRepository(JdbcTemplate jdbcTemplate) {
   - Good way of DB → model mapping: JdbcTemplate.query(...) + a row-mapper lambda is a clean way to make rows into Java objects that Spring can make into JSON.
   
 **Testing**
+
 Tested using both the browser and terminal as well. 
+
+### December 13th, 2025: Part 2 for Account Summary
+- Implemented GET /api/accounts/{accountId}/summary?from=YYYY-MM-DD&to=YYYY-MM-DD
+- Added SQL aggregation in AccountRepository using SUM, COALESCE, and CASE to compute totalIncome, totalExpenses, and net
+- Controller → Service → Repository flow and checked with curl
+
+### December 14th, 2025: Bonus Part 3 For Daily Summary
+- Implemented GET /api/accounts/{accountId}/daily-summary?from=YYYY-MM-DD&to=YYYY-MM-DD
+- Added GROUP BY date + ORDER BY date query for daily totals
+- Verified results match expected day-by-day output (income/expense/net per day)
+
+### December 15th, 2025: Resource and Mapper + Unit Tests
+- Refactored API responses to use resources/DTOs instead of returning DB models directly
+- Added MapStruct mappers (model → resource) to keep service/controller clean
+- Keep controller and services seperated MapStructmappers helped with converting Model -> Resource(DTO) helps with clean seperation of layers
+- Wrote meaningful tests for aggregation correctness:
+  
+### December 16th, 2025: Postman and Validation and Error Handling
+- Created Postman collections for each endpoint (accounts list, summary, daily summary)
+- Added a local environment file with baseUrl
+- Ran collections from terminal using Newman and confirmed 200OK responses for all endpoints
+- Added explicit validation at the controller layer to give bad request error so it doesn't reach the buisness logic
+
+### Testing Strategy
+
+- **Unit tests (JUnit)** focus on service-layer aggregation logic:
+  - correct totals
+  - boundary dates
+  - no transactions
+  - no data leakage between accounts
+- **API tests (Postman/Newman)** validate request/response correctness end-to-end
+- This separation ensures business logic correctness independent of HTTP issues
+
+### Diagram
