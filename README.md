@@ -2,7 +2,7 @@
 
 ## Run the Project
 
-1. **Start the Spring Boot server**
+1. **Start the Spring Boot server** 
 - Run the app from IntelliJ (green start on `DemoApplication.java`)
 2. **DataBase Setup**
 On startup, Spring executes quicken_project.sql to:
